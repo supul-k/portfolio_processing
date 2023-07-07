@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('HomePage');
+    return view('Home/HomePage');
 });
 
 Route::post('/photos/upload', [PhotoController::class, 'upload'])->name('photos.upload');
