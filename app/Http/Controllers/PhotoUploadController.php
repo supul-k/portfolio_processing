@@ -10,12 +10,12 @@ class PhotoUploadController extends Controller
 {
     public function upload(Request $request)
     {
-        $folderPath = $request->file('folder')->getRealPath();
-        $files = glob($folderPath . '/*');
+        $files = $request->file('files');
 
-        $albumId = time(); 
+        $albumId = time();
 
         foreach ($files as $file) {
+
             $path = Storage::putFile('public/photos', $file);
 
             $photo = new Photo();
@@ -24,15 +24,18 @@ class PhotoUploadController extends Controller
             $photo->album_id = $albumId;
             $photo->save();
         }
-dd('hello');
-        return redirect()->back()->with('success', 'Folder uploaded successfully!');
+
+        $uploadedPhotos = Photo::where('album_id', $albumId)->get();
+
+        return view('portfolio')->with('photos', $uploadedPhotos);
     }
 
-    public function Portfolio()
+    public function process(Request $request)
     {
-        $latestAlbum = Photo::orderBy('album_id', 'desc')->first();
-        $photos = Photo::where('album_id', $latestAlbum->album_id)->get();
+        $albumId = $request->input('album_id');
 
-        return view('portfolio.index', compact('photos'));
+        $uploadedPhotos = Photo::where('album_id', $albumId)->get();
+
     }
+
 }

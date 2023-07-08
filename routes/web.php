@@ -18,3 +18,5 @@ Route::get('/', function () {
 });
 
 Route::post('/photos/upload', [PhotoUploadController::class, 'upload'])->name('photos.upload');
+
+Route::post('/photos/process', [PhotoUploadController::class, 'process'])->name('photos.process');

@@ -31,7 +31,7 @@
                                     style="display: flex; align-items: center; justify-content: center;">
                                     Discover select
                                 </p>
-                                <input type="file" id="upload" name="folder" webkitdirectory hidden>
+                                <input type="file" id="upload" name="files[]" multiple hidden>
                             </label>
                         </form>
 
