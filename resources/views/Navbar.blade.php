@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">
-            <img style="width: 50px; height: auto;" src="{{ asset('images/logo.png') }}" alt="logo">
+        <a class="navbar-brand fs-3" href="/">
+            {{-- <img style="width: 50px; height: auto;" src="{{ asset('images/logo.png') }}" alt="logo"> --}}
             Portfolio
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
@@ -10,7 +10,7 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
+                <li class="nav-item fs-4">
                     <a class="nav-link active" aria-current="page" href="#">Select</a>
                 </li>
             </ul>
