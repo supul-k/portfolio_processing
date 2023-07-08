@@ -24,14 +24,17 @@
                         <p class="card-text">Game-changing image culling – powered by smart tech and designed from the
                             ground
                             up for professional photographers.</p>
-                        <a href="#" class="btn btn-dark" style="width: 100%; height: 10%;">
-                            <p class="fs-3 fw-bold"
-                                style="display: block;    
-                                align-items: center;
-                                justify-items: center;">
-                                Discover select
-                            </p>
-                        </a>
+                        <form action="{{ route('photos.upload') }}" id="uploadForm" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            <label for="upload" class="btn btn-dark" style="width: 100%; height: 10%;">
+                                <p class="fs-3 fw-bold"
+                                    style="display: flex; align-items: center; justify-content: center;">
+                                    Discover select
+                                </p>
+                                <input type="file" id="upload" name="files[]" multiple hidden>
+                            </label>
+                        </form>
+
 
                     </div>
 
@@ -44,10 +47,14 @@
         </div>
     </section>
 
-    <form action="{{ route('photos.upload') }}" method="POST" enctype="multipart/form-data">
-        @csrf
-        <input type="file" name="photos[]" multiple>
-        <button type="submit">Upload</button>
-    </form>
-
 @endsection
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#upload').on('change', function() {
+            console.log('uploading');
+            $('#uploadForm').submit();
+        });
+    });
+</script>

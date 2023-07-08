@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\PhotoUploadController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,4 +17,6 @@ Route::get('/', function () {
     return view('Home/HomePage');
 });
 
-Route::post('/photos/upload', [PhotoController::class, 'upload'])->name('photos.upload');
+Route::post('/photos/upload', [PhotoUploadController::class, 'upload'])->name('photos.upload');
+
+Route::post('/photos/process', [PhotoUploadController::class, 'process'])->name('photos.process');

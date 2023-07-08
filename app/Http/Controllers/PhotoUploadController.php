@@ -4,24 +4,38 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Photo;
+use Illuminate\Support\Facades\Storage;
 
 class PhotoUploadController extends Controller
 {
     public function upload(Request $request)
     {
-        $request->validate([
-            'photos' => 'required|array',
-            'photos.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+        $files = $request->file('files');
 
-        foreach ($request->file('photos') as $file) {
-            $path = $file->store('public/photos');
+        $albumId = time();
+
+        foreach ($files as $file) {
+
+            $path = Storage::putFile('public/photos', $file);
 
             $photo = new Photo();
+            $photo->user_id = 1;
             $photo->path = $path;
+            $photo->album_id = $albumId;
             $photo->save();
         }
 
-        return redirect()->back()->with('success', 'Photos uploaded successfully!');
+        $uploadedPhotos = Photo::where('album_id', $albumId)->get();
+
+        return view('portfolio')->with('photos', $uploadedPhotos);
     }
+
+    public function process(Request $request)
+    {
+        $albumId = $request->input('album_id');
+
+        $uploadedPhotos = Photo::where('album_id', $albumId)->get();
+
+    }
+
 }
