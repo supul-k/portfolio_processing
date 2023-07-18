@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
         <a class="navbar-brand fs-3" href="/">
             {{-- <img style="width: 50px; height: auto;" src="{{ asset('images/logo.png') }}" alt="logo"> --}}

@@ -9,7 +9,7 @@
     {{-- <hr class="bg-gradient mt-0 mb-0"
         style="background-image: linear-gradient(to right, rgb(255, 0, 0), rgb(0, 255, 0)); height: 20px;"> --}}
 
-    <section class="vh-100">
+    <section class="vh-100 bg-dark">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-6 text-black"
@@ -19,15 +19,15 @@
 
                     <div style="width: 50%;">
 
-                        <p class="fs-1 fw-normal">Cull photos fast with</p>
-                        <p class="fs-1 fw-bold">Narrative Select</p>
-                        <p class="card-text">Game-changing image culling – powered by smart tech and designed from the
+                        <p class="fs-1 fw-normal text-light">Cull photos fast with</p>
+                        <p class="fs-1 fw-bold text-light">Narrative Select</p>
+                        <p class="card-text text-light">Game-changing image culling – powered by smart tech and designed from the
                             ground
                             up for professional photographers.</p>
                         <form action="{{ route('photos.upload') }}" id="uploadForm" method="POST" enctype="multipart/form-data">
                             @csrf
-                            <label for="upload" class="btn btn-dark" style="width: 100%; height: 10%;">
-                                <p class="fs-3 fw-bold"
+                            <label for="upload" class="btn btn-dark bg-light" style="width: 100%; height: 10%;">
+                                <p class="fs-3 fw-bold text-dark"
                                     style="display: flex; align-items: center; justify-content: center;">
                                     Discover select
                                 </p>

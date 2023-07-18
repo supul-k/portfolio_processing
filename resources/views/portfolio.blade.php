@@ -6,40 +6,52 @@
 
 @section('content')
 
-<div style="display: flex; justify-content: space-between;">
+    <div class="bg-dark">
 
-    <div style="display: flex; flex-direction: column; flex-wrap: wrap; justify-content: flex-start;">
-        @foreach ($photos->chunk(ceil($photos->count() / 2)) as $chunk)
-            @foreach ($chunk as $photo)
-                @php
-                    $trimmedPath = Str::replaceFirst('public/photos/', '', $photo->path);
-                @endphp
+        <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner w-100 h-70">
+                @foreach ($photos->chunk(ceil($photos->count() / 2)) as $chunk)
+                    @foreach ($chunk as $index => $photo)
+                        @php
+                            $carouselItemClass = $index === 0 ? 'carousel-item active' : 'carousel-item';
+                            $trimmedPath = Str::replaceFirst('public/photos/', '', $photo->path);
+                        @endphp
 
-                <div class="card" style="width: 18rem; height: 200px;">
-                    <img src="{{ asset('storage/photos/' . $trimmedPath) }}" alt="logo">
-                </div>
+                        <div class="{{ $carouselItemClass }} text-center">
+                            <img src="{{ asset('storage/photos/' . $trimmedPath) }}" alt="Image {{ $index + 1 }}">
+                        </div>
+                    @endforeach
+                @endforeach
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
+                data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls"
+                data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
 
-                @if ($loop->iteration % 5 == 0)
-                    <div style="flex-basis: 100%;"></div>
-                @endif
-            @endforeach
-        @endforeach
+        <div style="display: flex; align-items: center; justify-content: center; padding: 20px;">
+            <form action="{{ route('photos.process') }}" id="processForm" method="POST">
+                @csrf
+                <label id="upload" for="upload" class="btn btn-light text-center" style="width: 50vw; ">
+                    <p class="fs-3 fw-bold" style="display: flex; align-items: center; justify-content: center;">
+                        Process Images
+                    </p>
+                    <input type="hidden" id="album_id" name="album_id" value="{{ $photos[0]->album_id }}">
+                </label>
+            </form>
+        </div>
+        
+        
+
+
+
     </div>
-
-    <div>
-        <form action="{{ route('photos.process') }}" id="processForm" method="POST">
-            @csrf
-            <label id="upload" for="upload" class="btn btn-dark" style="width: 100%; height: 10%;">
-                <p class="fs-3 fw-bold" style="display: flex; align-items: center; justify-content: center;">
-                    Process Images
-                </p>
-                <input type="hidden" id="album_id" name="album_id" value="{{ $photos[0]->album_id }}">
-            </label>
-        </form>
-    </div>
-
-</div>
-
 
 @endsection
 
