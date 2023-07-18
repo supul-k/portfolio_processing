@@ -20,6 +20,7 @@ class PhotoUploadController extends Controller
 
             $photo = new Photo();
             $photo->user_id = 1;
+            $photo->caption = $file->getClientOriginalName();
             $photo->path = $path;
             $photo->album_id = $albumId;
             $photo->save();
@@ -37,22 +38,22 @@ class PhotoUploadController extends Controller
         $uploadedPhotos = Photo::where('album_id', $albumId)->get();
         dd($uploadedPhotos);
         // Save uploaded photos to a temporary directory
-        foreach ($uploadedPhotos as $photo) {
-            $path = $photo->getAttribute('path');
-            $file = Storage::disk('local')->path($path);
-            $temporaryPath = '/path/to/temporary/directory/' . $photo->id . '.jpg';
-            copy($file, $temporaryPath);
-            $photo->temporaryPath = $temporaryPath;
+            foreach ($uploadedPhotos as $photo) {
+                $path = $photo->getAttribute('path');
+                $file = Storage::disk('local')->path($path);
+                $temporaryPath = '/path/to/temporary/directory/' . $photo->caption . '.jpg';
+                copy($file, $temporaryPath);
+                $photo->temporaryPath = $temporaryPath;
 
-            // Execute the Python script or command with the temporary image file as argument
-            $command = "python /path/to/your/python_script.py " . escapeshellarg($temporaryPath);
-            $output = shell_exec($command);
+                // Execute the Python script or command with the temporary image file as argument
+                $command = "python /path/to/your/python_script.py " . escapeshellarg($temporaryPath);
+                $output = shell_exec($command);
 
-            // Process the output from the Python script or command
-            // ...
+                // Process the output from the Python script or command
+                // ...
 
-            // Update the Photo model with the processed data
-            // ...
-        }
+                // Update the Photo model with the processed data
+                // ...
+            }
     }
 }
