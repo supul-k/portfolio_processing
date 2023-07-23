@@ -20,3 +20,5 @@ Route::get('/', function () {
 Route::post('/photos/upload', [PhotoUploadController::class, 'upload'])->name('photos.upload');
 
 Route::post('/photos/process', [PhotoUploadController::class, 'process'])->name('photos.process');
+
+Route::post('/photos/download', [PhotoUploadController::class, 'downloadImages'])->name('photos.download');
