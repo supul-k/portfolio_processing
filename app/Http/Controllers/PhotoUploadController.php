@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Photo;
 use Illuminate\Support\Facades\Storage;
+use ZipArchive;
 use Illuminate\Support\Facades\File;
+use Symfony\Component\HttpFoundation\Response;
 
 class PhotoUploadController extends Controller
 {
@@ -35,6 +37,16 @@ class PhotoUploadController extends Controller
 
     public function process(Request $request)
     {
+        $filesToDeleteGood = Storage::disk('local')->files('/ML_Project/good');
+        foreach ($filesToDeleteGood as $file) {
+            Storage::disk('local')->delete($file);
+        }
+
+        $filesToDeleteBad = Storage::disk('local')->files('/ML_Project/bad');
+        foreach ($filesToDeleteBad as $file) {
+            Storage::disk('local')->delete($file);
+        }
+
         $albumId = $request->input('album_id');
 
         $uploadedPhotos = Photo::where('album_id', $albumId)->get();
@@ -47,29 +59,66 @@ class PhotoUploadController extends Controller
             $destinationFilePath = '/ML_Project/images/' . $filename;
             // $fileContents = Storage::disk('public')->get($filePath);
             Storage::disk('local')->copy($path, $destinationFilePath);
+        }
 
-            // if (Storage::disk('local')->exists($destinationFilePath)) {
-            //     // Photo copied successfully, you can proceed with further actions or logging.
-            //     // For example, you could update the $photo model with information about the successful copy.
-            //     dd('copied successfully');
-            // } else {
-            //     // Photo was not copied successfully, handle the error or log it.
-            // }
-            // $fileName = pathinfo($path, PATHINFO_BASENAME);
-            // $temporaryPath = '/path/to/ML_Project/images/' . $fileName;
+        $scriptPath = app_path('ML_Project' . DIRECTORY_SEPARATOR . 'new.py');
+        $result = shell_exec("python " . $scriptPath . " 2>&1");
+        $outputLines = array_filter(explode("\n", $result));
+        $lastLine = end($outputLines);
+        $value = intval(trim($lastLine));
 
-            // Move the image to the ML project's images folder
+        // Check the value and load the appropriate view
+        if ($value === 1) {
 
-            // Now, you can execute the Python script or command with the temporary image file as an argument
-            $command = "python ML_Project/new.py";
-            $output = shell_exec($command);
-            dd( $output);
+            $filesToDeleteImages = Storage::disk('local')->files('/ML_Project/images');
+            foreach ($filesToDeleteImages as $file) {
+                Storage::disk('local')->delete($file);
+            }
 
-            // Process the output from the Python script or command
-            // ...
+            $filesToDeletePhotos = Storage::disk('local')->files('public/photos');
+            foreach ($filesToDeletePhotos as $file) {
+                Storage::disk('local')->delete($file);
+            }
 
-            // Update the Photo model with the processed data
-            // ...
+            $imageDirectory = storage_path('app/ML_Project/good');
+            return view('finalPortfolio')->with('imageDirectory', $imageDirectory);
+        } else {
+            return view('failure_view');
+        }
+    }
+
+    public function downloadImages(Request $request)
+    {
+        // Get the path to the 'good' folder
+        $folderPath = public_path('ML_Project/good');
+
+        // Get all the files from the 'good' folder
+        $files = Storage::disk('public')->files('ML_Project/good');
+        dd($files);
+        // Create a new ZIP archive
+        $zip = new \ZipArchive();
+        $zipFileName = public_path('images.zip'); // Full path to the ZIP archive
+        if ($zip->open($zipFileName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE)) {
+            // Add each file to the ZIP archive
+            foreach ($files as $file) {
+                // Get the file name from the full path
+                $fileName = basename($file);
+                // Add the file to the ZIP archive
+                $zip->addFile($folderPath . DIRECTORY_SEPARATOR . $fileName, $fileName);
+            }
+
+            $zip->close();
+
+            if (file_exists($zipFileName)) {
+                // Download the ZIP file
+                return response()->download($zipFileName)->deleteFileAfterSend();
+            } else {
+                // If ZIP archive creation fails, show an error message or redirect as needed
+                return redirect()->back()->with('error', 'Failed to create ZIP archive.');
+            }
+        } else {
+            // If ZIP archive creation fails, show an error message or redirect as needed
+            return redirect()->back()->with('error', 'Failed to create ZIP archive.');
         }
     }
 }
